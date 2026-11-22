@@ -41,17 +41,18 @@ static void write_bmp(unsigned * bmp) {
   fclose(f);
 }
 
+static void clear_bmp(unsigned * bmp) {
+  for (int y = 0; y < HEIGHT; y++) {
+    for (int x = 0; x < WIDTH; x++) {
+      bmp[(HEIGHT - y - 1) * WIDTH + x] = 0xFF000000;
+    }
+  }
+}
+
 int main() {
   unsigned bmp[WIDTH * HEIGHT];
 
-  for (int y = 0; y < HEIGHT; y++) {
-    for (int x = 0; x < WIDTH; x++) {
-      unsigned bit = 0xFFFF0000;
-      bit |= x << 9;
-      bit |= y << 1;
-      bmp[(HEIGHT - y - 1) * WIDTH + x] = bit;
-    }
-  }
+  clear_bmp(bmp);
 
   write_bmp(bmp);
 }
