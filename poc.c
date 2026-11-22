@@ -19,7 +19,7 @@ struct __attribute__((packed)) bmp_hdr_s {
   uint16_t bitc;
 };
 
-int main() {
+static void write_bmp(unsigned * bmp) {
   FILE * f = fopen("poc.bmp", "wb");
 
   struct bmp_hdr_s hdr = {
@@ -36,14 +36,22 @@ int main() {
   };
   fwrite(&hdr, 1, sizeof(hdr), f);
 
+  fwrite(bmp, 1, WIDTH * HEIGHT * 4, f);
+
+  fclose(f);
+}
+
+int main() {
+  unsigned bmp[WIDTH * HEIGHT];
+
   for (int y = 0; y < HEIGHT; y++) {
     for (int x = 0; x < WIDTH; x++) {
       unsigned bit = 0xFFFF0000;
-      bit |= x << 8;
-      bit |= y;
-      fwrite(&bit, 1, 4, f);
+      bit |= x << 9;
+      bit |= y << 1;
+      bmp[(HEIGHT - y - 1) * WIDTH + x] = bit;
     }
   }
 
-  fclose(f);
+  write_bmp(bmp);
 }
