@@ -10,7 +10,7 @@
 #define PI 3.1415926535897
 #define SWAP(a, b) do { a ^= b; b ^= a; a ^= b; } while (0)
 
-#define BMP_BLIP_R 0
+#define BMP_BLIP_R 2
 
 struct __attribute__((packed)) bmp_hdr_s {
   char     bm[2];
@@ -63,8 +63,6 @@ static void bmp_blip(unsigned * bmp, int x, int y) {
   }
 }
 static void bmp_line(unsigned * bmp, int x1, int y1, int x2, int y2) {
-  printf("%d,%d -- %d,%d\n", x1, y1, x2, y2);
-  
   if (x1 > x2) SWAP(x1, x2);
   if (y1 > y2) SWAP(y1, y2);
 
@@ -91,14 +89,14 @@ static void bmp_line(unsigned * bmp, int x1, int y1, int x2, int y2) {
 
 struct pen_s {
   unsigned * bmp;
-  int x;
-  int y;
+  float x;
+  float y;
   int a;
 };
 
 static void pen_f(struct pen_s * p, int d) {
-  int tx = p->x + cos((p->a * PI) / 180.f) * d;
-  int ty = p->y + sin((p->a * PI) / 180.f) * d;
+  float tx = p->x + cos((p->a * PI) / 180.f) * d;
+  float ty = p->y + sin((p->a * PI) / 180.f) * d;
   if (d >= 0) bmp_line(p->bmp, p->x, p->y, tx, ty);
   p->x = tx;
   p->y = ty;
@@ -123,7 +121,6 @@ int main() {
   pen_f(&p, 40);
   pen_r(&p, 90);
   pen_f(&p, 10);
-  puts("===");
 
   p = (struct pen_s) {
     .bmp = bmp,
@@ -140,9 +137,9 @@ int main() {
   pen_r(&p, -90);
   pen_f(&p, -10);
   pen_r(&p, 90);
-  pen_f(&p, -10);
+  pen_f(&p, -20);
   pen_r(&p, 180);
-  pen_f(&p, 20);
+  pen_f(&p, 0);
 
 #if 0
   bmp_line(bmp, 20, 60, 40, 60);
