@@ -50,7 +50,7 @@ static inline void bmp_clear(unsigned * bmp) {
 }
 
 static inline void bmp_pix(unsigned * bmp, int x, int y) {
-  if (x < 0 || x >= WIDTH / 2 || y < 0 || y >= HEIGHT / 2) return;
+  if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return;
   bmp[(HEIGHT - y - 1) * WIDTH + x] = ~0;
 }
 static void bmp_blip(unsigned * bmp, int x, int y) {
@@ -66,6 +66,11 @@ static void bmp_line(unsigned * bmp, int x1, int y1, int x2, int y2) {
 
   int dx = x2 - x1;
   int dy = y2 - y1;
+
+  if (dx == 0 && dy == 0) {
+    bmp_blip(bmp, x1, y1);
+    return;
+  }
 
   if (dx > dy) {
     for (int x = x1; x <= x2; x++) {
@@ -85,7 +90,15 @@ int main() {
 
   bmp_clear(bmp);
 
-  bmp_line(bmp, 20, 30, 100, 50);
+  bmp_line(bmp, 20, 60, 40, 60);
+  bmp_line(bmp, 30, 60, 30, 20);
+  bmp_line(bmp, 30, 20, 20, 20);
+
+  bmp_line(bmp, 50, 60, 70, 60);
+  bmp_line(bmp, 70, 60, 70, 20);
+  bmp_line(bmp, 70, 20, 50, 20);
+  bmp_line(bmp, 50, 20, 50, 60);
+  bmp_line(bmp, 60, 40, 60, 40);
 
   bmp_write(bmp);
 }
