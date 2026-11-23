@@ -8,6 +8,8 @@
 
 #define SWAP(a, b) do { a ^= b; b ^= a; a ^= b; } while (0)
 
+#define BMP_BLIP_R 2
+
 struct __attribute__((packed)) bmp_hdr_s {
   char     bm[2];
   unsigned size;
@@ -51,6 +53,13 @@ static inline void bmp_pix(unsigned * bmp, int x, int y) {
   if (x < 0 || x >= WIDTH / 2 || y < 0 || y >= HEIGHT / 2) return;
   bmp[(HEIGHT - y - 1) * WIDTH + x] = ~0;
 }
+static void bmp_blip(unsigned * bmp, int x, int y) {
+  for (int dx = -BMP_BLIP_R; dx <= BMP_BLIP_R; dx++) {
+    for (int dy = -BMP_BLIP_R; dy <= BMP_BLIP_R; dy++) {
+      bmp_pix(bmp, x + dx, y + dy);
+    }
+  }
+}
 static void bmp_line(unsigned * bmp, int x1, int y1, int x2, int y2) {
   if (x1 > x2) SWAP(x1, x2);
   if (y1 > y2) SWAP(y1, y2);
@@ -61,12 +70,12 @@ static void bmp_line(unsigned * bmp, int x1, int y1, int x2, int y2) {
   if (dx > dy) {
     for (int x = x1; x <= x2; x++) {
       int y = y1 + (x - x1) * dy / dx;
-      bmp_pix(bmp, x, y);
+      bmp_blip(bmp, x, y);
     }
   } else {
     for (int y = y1; y <= y2; y++) {
       int x = x1 + (y - y1) * dx / dy;
-      bmp_pix(bmp, x, y);
+      bmp_blip(bmp, x, y);
     }
   }
 }
