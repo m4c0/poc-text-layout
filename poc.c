@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define WIDTH 128
+#define WIDTH 256
 #define HEIGHT 128
 
 #define PI 3.1415926535897
@@ -109,38 +109,79 @@ static void pen_r(struct pen_s * p, int a) {
   p->a = (p->a - a + 360) % 360;
 }
 
-static void fnt_0(unsigned * bmp, int * x, int * y) {
-  struct pen_s p = {
-    .bmp = bmp,
-    .x   = *x,
-    .y   = *y,
-  };
-  pen_f(&p, 20);
-  pen_r(&p, 90);
-  pen_f(&p, 40);
-  pen_r(&p, 90);
-  pen_f(&p, 20);
-  pen_r(&p, 90);
-  pen_f(&p, 40);
-  pen_r(&p, 90);
-  pen_m(&p, 10);
-  pen_r(&p, 90);
-  pen_m(&p, 20);
-  pen_f(&p, 0);
-  *x += 30;
+static void fnt_0(struct pen_s * p) {
+  pen_f(p, 20);
+  pen_r(p, 90);
+  pen_f(p, 40);
+  pen_r(p, 90);
+  pen_f(p, 20);
+  pen_r(p, 90);
+  pen_f(p, 40);
+  pen_r(p, 90);
+  pen_m(p, 10);
+  pen_r(p, 90);
+  pen_m(p, 20);
+  pen_f(p, 0);
+
+  pen_r(p, 180);
+  pen_m(p, 20);
+  pen_r(p, 90);
+  pen_m(p, 20);
 }
-static void fnt_1(unsigned * bmp, int * x, int * y) {
-  struct pen_s p = {
-    .bmp = bmp,
-    .x   = *x,
-    .y   = *y,
-  };
-  pen_m(&p, 10);
-  pen_r(&p, 90);
-  pen_f(&p, 40);
-  pen_r(&p, 90);
-  pen_f(&p, 10);
-  *x += 20;
+static void fnt_1(struct pen_s * p) {
+  pen_m(p, 10);
+  pen_r(p, 90);
+  pen_f(p, 40);
+  pen_r(p, 90);
+  pen_f(p, 10);
+
+  pen_r(p, 90);
+  pen_m(p, 40);
+  pen_r(p, 90);
+  pen_m(p, 20);
+}
+static void fnt_a(struct pen_s * p) {
+  pen_r(p, 90);
+  pen_m(p, 30);
+  pen_r(p, -90);
+  pen_f(p, 20);
+  pen_r(p, -90);
+  pen_f(p, 30);
+  pen_r(p, -90);
+  pen_f(p, 20);
+  pen_r(p, -90);
+  pen_f(p, 20);
+  pen_r(p, -90);
+  pen_f(p, 20);
+  pen_r(p, -90);
+  pen_m(p, 20);
+  pen_r(p, 90);
+  pen_m(p, 10);
+}
+static void fnt_circ(struct pen_s * p) {
+  pen_m(p, 5);
+  pen_r(p, 90);
+  pen_f(p, 5);
+  pen_r(p, -90);
+  pen_f(p, 10);
+  pen_r(p, -90);
+  pen_f(p, 5);
+  pen_r(p, 90);
+  pen_m(p, 15);
+}
+static void fnt_a_circ(struct pen_s * p) {
+  fnt_a(p);
+
+  pen_m(p, -30);
+  pen_r(p, 90);
+  pen_m(p, 40);
+  pen_r(p, -90);
+
+  fnt_circ(p);
+
+  pen_r(p, -90);
+  pen_m(p, 40);
+  pen_r(p, 90);
 }
 
 int main() {
@@ -148,12 +189,17 @@ int main() {
 
   bmp_clear(bmp);
 
-  int x = 20;
-  int y = 60;
-  fnt_1(bmp, &x, &y);
-  fnt_0(bmp, &x, &y);
-  fnt_1(bmp, &x, &y);
-  fnt_0(bmp, &x, &y);
+  struct pen_s p = {
+    .bmp = bmp,
+    .x   = 20,
+    .y   = 60,
+  };
+  fnt_1(&p);
+  fnt_0(&p);
+  fnt_0(&p);
+  fnt_1(&p);
+  fnt_a_circ(&p);
+  fnt_a(&p);
 
   bmp_write(bmp);
 }
