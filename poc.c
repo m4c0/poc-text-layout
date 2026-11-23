@@ -6,6 +6,8 @@
 #define WIDTH 128
 #define HEIGHT 128
 
+#define SWAP(a, b) do { a ^= b; b ^= a; a ^= b; } while (0)
+
 struct __attribute__((packed)) bmp_hdr_s {
   char     bm[2];
   unsigned size;
@@ -45,9 +47,28 @@ static inline void bmp_clear(unsigned * bmp) {
   for (int i = 0; i < WIDTH * HEIGHT; i++, bmp++) *bmp = 0xFF000000;
 }
 
-static inline void bmp_pix(unsigned * bmp, int x, int y, unsigned p) {
+static inline void bmp_pix(unsigned * bmp, int x, int y) {
   if (x < 0 || x >= WIDTH / 2 || y < 0 || y >= HEIGHT / 2) return;
-  bmp[(HEIGHT - y - 1) * WIDTH + x] = p;
+  bmp[(HEIGHT - y - 1) * WIDTH + x] = ~0;
+}
+static void bmp_line(unsigned * bmp, int x1, int y1, int x2, int y2) {
+  if (x1 > x2) SWAP(x1, x2);
+  if (y1 > y2) SWAP(y1, y2);
+
+  int dx = x2 - x1;
+  int dy = y2 - y1;
+
+  if (dx > dy) {
+    for (int x = x1; x <= x2; x++) {
+      int y = y1 + (x - x1) * dy / dx;
+      bmp_pix(bmp, x, y);
+    }
+  } else {
+    for (int y = y1; y <= y2; y++) {
+      int x = x1 + (y - y1) * dx / dy;
+      bmp_pix(bmp, x, y);
+    }
+  }
 }
 
 int main() {
@@ -55,7 +76,7 @@ int main() {
 
   bmp_clear(bmp);
 
-  bmp_pix(bmp, 32, 32, ~0);
+  bmp_line(bmp, 20, 30, 100, 50);
 
   bmp_write(bmp);
 }
