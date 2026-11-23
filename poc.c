@@ -94,10 +94,14 @@ struct pen_s {
   int a;
 };
 
+static void pen_m(struct pen_s * p, int d) {
+  p->x += cos((p->a * PI) / 180.f) * d;
+  p->y += sin((p->a * PI) / 180.f) * d;
+}
 static void pen_f(struct pen_s * p, int d) {
   float tx = p->x + cos((p->a * PI) / 180.f) * d;
   float ty = p->y + sin((p->a * PI) / 180.f) * d;
-  if (d >= 0) bmp_line(p->bmp, p->x, p->y, tx, ty);
+  bmp_line(p->bmp, p->x, p->y, tx, ty);
   p->x = tx;
   p->y = ty;
 }
@@ -115,9 +119,8 @@ int main() {
     .x   = 20,
     .y   = 60,
   };
-  pen_r(&p, -180);
-  pen_f(&p, -10);
-  pen_r(&p, -90);
+  pen_m(&p, 10);
+  pen_r(&p, 90);
   pen_f(&p, 40);
   pen_r(&p, 90);
   pen_f(&p, 10);
@@ -134,11 +137,10 @@ int main() {
   pen_f(&p, 20);
   pen_r(&p, 90);
   pen_f(&p, 40);
-  pen_r(&p, -90);
-  pen_f(&p, -10);
   pen_r(&p, 90);
-  pen_f(&p, -20);
-  pen_r(&p, 180);
+  pen_m(&p, 10);
+  pen_r(&p, 90);
+  pen_m(&p, 20);
   pen_f(&p, 0);
 
 #if 0
