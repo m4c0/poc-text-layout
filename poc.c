@@ -173,6 +173,20 @@ static void fnt_e(struct pen_s * p) {
   pen_f(p, 20);
   pen_m(p, 10);
 }
+static void fnt_t(struct pen_s * p) {
+  pen_f(p, 15);
+  pen_m(p, -15);
+  pen_r(p, 90);
+  pen_f(p, 40);
+  pen_m(p, -10);
+  pen_r(p, -90);
+  pen_f(p, 10);
+  pen_m(p, 15);
+  pen_r(p, -90);
+  pen_m(p, 30);
+  pen_r(p, 90);
+}
+
 static void fnt_circ(struct pen_s * p) {
   pen_m(p, 5);
   pen_r(p, 90);
@@ -184,28 +198,26 @@ static void fnt_circ(struct pen_s * p) {
   pen_r(p, 90);
   pen_m(p, 15);
 }
-static void fnt_acc_comp_start(struct pen_s * p) {
+
+static void fnt_comp_circ(struct pen_s * p) {
   pen_m(p, -30);
   pen_r(p, 90);
   pen_m(p, 40);
   pen_r(p, -90);
-}
-static void fnt_acc_comp_end(struct pen_s * p) {
+
+  fnt_circ(p);
+
   pen_r(p, -90);
   pen_m(p, 40);
   pen_r(p, 90);
 }
 static void fnt_a_circ(struct pen_s * p) {
   fnt_a(p);
-  fnt_acc_comp_start(p);
-  fnt_circ(p);
-  fnt_acc_comp_end(p);
+  fnt_comp_circ(p);
 }
 static void fnt_e_circ(struct pen_s * p) {
   fnt_e(p);
-  fnt_acc_comp_start(p);
-  fnt_circ(p);
-  fnt_acc_comp_end(p);
+  fnt_comp_circ(p);
 }
 
 int main() {
@@ -224,6 +236,9 @@ int main() {
   fnt_1(&p);
   fnt_a_circ(&p);
   fnt_e_circ(&p);
+  fnt_a(&p);
+  fnt_t(&p);
+  fnt_t(&p);
 
   bmp_write(bmp);
 }
