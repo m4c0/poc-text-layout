@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define PI 3.1415926535897
 #define SWAP(a, b) do { a ^= b; b ^= a; a ^= b; } while (0)
@@ -223,33 +224,42 @@ static void fnt_e_circ(struct pen_s * p) {
   fnt_comp_circ(p);
 }
 
+static void layout(struct pen_s * p) {
+  fnt_t(p);
+  fnt_a(p);
+  fnt_t(p);
+  fnt_a_circ(p);
+  fnt_1(p);
+  fnt_0(p);
+  fnt_0(p);
+  fnt_1(p);
+  fnt_e_circ(p);
+}
+
 static void dummy(void * bmp, int x1, int y1, int x2, int y2) {}
 int main() {
-  unsigned data[256 * 128];
+  struct pen_s p = {
+    .line = dummy,
+    .x = 30,
+    .y = 80,
+  };
+  layout(&p);
 
   struct bmp_s bmp = {
-    .data = data,
-    .w    = 256,
-    .h    = 128,
+    .data = malloc(p.x * p.y * 4),
+    .w    = p.x,
+    .h    = p.y,
   };
 
   bmp_clear(&bmp);
 
-  struct pen_s p = {
+  p = (struct pen_s) {
     .line = bmp_line,
     .ptr  = &bmp,
     .x    = 20,
     .y    = 60,
   };
-  fnt_t(&p);
-  fnt_a(&p);
-  fnt_t(&p);
-  fnt_a_circ(&p);
-  fnt_1(&p);
-  fnt_0(&p);
-  fnt_0(&p);
-  fnt_1(&p);
-  fnt_e_circ(&p);
+  layout(&p);
 
   bmp_write(&bmp);
 }
