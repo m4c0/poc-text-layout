@@ -115,16 +115,16 @@ int main() {
     .x   = 20,
     .y   = 60,
   };
-  pen_f(&p, 20);
+  pen_r(&p, -180);
   pen_f(&p, -10);
-  pen_r(&p, 90);
+  pen_r(&p, -90);
   pen_f(&p, 40);
   pen_r(&p, 90);
   pen_f(&p, 10);
 
   p = (struct pen_s) {
     .bmp = bmp,
-    .x   = 20 + 30,
+    .x   = 20 + 20,
     .y   = 60 +  0,
   };
   pen_f(&p, 20);
