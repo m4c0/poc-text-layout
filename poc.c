@@ -4,9 +4,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define WIDTH 256
-#define HEIGHT 128
-
 #define PI 3.1415926535897
 #define SWAP(a, b) do { a ^= b; b ^= a; a ^= b; } while (0)
 
@@ -24,38 +21,42 @@ struct __attribute__((packed)) bmp_hdr_s {
   uint16_t planes;
   uint16_t bitc;
 };
+struct bmp_s {
+  unsigned * data;
+  int w, h;
+};
 
-static void bmp_write(unsigned * bmp) {
+static void bmp_write(struct bmp_s * bmp) {
   FILE * f = fopen("poc.bmp", "wb");
 
   struct bmp_hdr_s hdr = {
     .bm   = { 'B', 'M' },
-    .size = sizeof(struct bmp_hdr_s) + WIDTH * HEIGHT * 4,
+    .size = sizeof(struct bmp_hdr_s) + bmp->w * bmp->h * 4,
     .res  = 0,
     .offs = sizeof(struct bmp_hdr_s),
 
     .hdr_sz = 12,
-    .width  = WIDTH,
-    .height = HEIGHT,
+    .width  = bmp->w,
+    .height = bmp->h,
     .planes = 1,
     .bitc   = 32,
   };
   fwrite(&hdr, 1, sizeof(hdr), f);
 
-  fwrite(bmp, 1, WIDTH * HEIGHT * 4, f);
+  fwrite(bmp->data, 1, bmp->w * bmp->h * 4, f);
 
   fclose(f);
 }
 
-static inline void bmp_clear(unsigned * bmp) {
-  for (int i = 0; i < WIDTH * HEIGHT; i++, bmp++) *bmp = 0xFF000000;
+static inline void bmp_clear(struct bmp_s * bmp) {
+  for (int i = 0; i < bmp->w * bmp->h; i++) bmp->data[i] = 0xFF000000;
 }
 
-static inline void bmp_pix(unsigned * bmp, int x, int y) {
-  if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) return;
-  bmp[(HEIGHT - y - 1) * WIDTH + x] = ~0;
+static inline void bmp_pix(struct bmp_s * bmp, int x, int y) {
+  if (x < 0 || x >= bmp->w || y < 0 || y >= bmp->h) return;
+  bmp->data[(bmp->h - y - 1) * bmp->w + x] = ~0;
 }
-static void bmp_blip(unsigned * bmp, int x, int y) {
+static void bmp_blip(struct bmp_s * bmp, int x, int y) {
   for (int dx = -BMP_BLIP_R; dx <= BMP_BLIP_R; dx++) {
     for (int dy = -BMP_BLIP_R; dy <= BMP_BLIP_R; dy++) {
       bmp_pix(bmp, x + dx, y + dy);
@@ -222,26 +223,33 @@ static void fnt_e_circ(struct pen_s * p) {
   fnt_comp_circ(p);
 }
 
+static void dummy(void * bmp, int x1, int y1, int x2, int y2) {}
 int main() {
-  unsigned bmp[WIDTH * HEIGHT];
+  unsigned data[256 * 128];
 
-  bmp_clear(bmp);
+  struct bmp_s bmp = {
+    .data = data,
+    .w    = 256,
+    .h    = 128,
+  };
+
+  bmp_clear(&bmp);
 
   struct pen_s p = {
     .line = bmp_line,
-    .ptr  = bmp,
+    .ptr  = &bmp,
     .x    = 20,
     .y    = 60,
   };
-  fnt_1(&p);
-  fnt_0(&p);
-  fnt_0(&p);
-  fnt_1(&p);
-  fnt_a_circ(&p);
-  fnt_e_circ(&p);
+  fnt_t(&p);
   fnt_a(&p);
   fnt_t(&p);
-  fnt_t(&p);
+  fnt_a_circ(&p);
+  fnt_1(&p);
+  fnt_0(&p);
+  fnt_0(&p);
+  fnt_1(&p);
+  fnt_e_circ(&p);
 
-  bmp_write(bmp);
+  bmp_write(&bmp);
 }
