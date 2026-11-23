@@ -62,7 +62,7 @@ static void bmp_blip(unsigned * bmp, int x, int y) {
     }
   }
 }
-static void bmp_line(unsigned * bmp, int x1, int y1, int x2, int y2) {
+static void bmp_line(void * bmp, int x1, int y1, int x2, int y2) {
   if (x1 > x2) SWAP(x1, x2);
   if (y1 > y2) SWAP(y1, y2);
 
@@ -88,7 +88,9 @@ static void bmp_line(unsigned * bmp, int x1, int y1, int x2, int y2) {
 }
 
 struct pen_s {
-  unsigned * bmp;
+  void (*line)(void * ptr, int x1, int y1, int x2, int y2);
+  void * ptr;
+
   float x;
   float y;
   int a;
@@ -101,7 +103,7 @@ static void pen_m(struct pen_s * p, int d) {
 static void pen_f(struct pen_s * p, int d) {
   float tx = p->x + cos((p->a * PI) / 180.f) * d;
   float ty = p->y + sin((p->a * PI) / 180.f) * d;
-  bmp_line(p->bmp, p->x, p->y, tx, ty);
+  (p->line)(p->ptr, p->x, p->y, tx, ty);
   p->x = tx;
   p->y = ty;
 }
@@ -226,9 +228,10 @@ int main() {
   bmp_clear(bmp);
 
   struct pen_s p = {
-    .bmp = bmp,
-    .x   = 20,
-    .y   = 60,
+    .line = bmp_line,
+    .ptr  = bmp,
+    .x    = 20,
+    .y    = 60,
   };
   fnt_1(&p);
   fnt_0(&p);
