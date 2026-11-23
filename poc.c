@@ -45,12 +45,17 @@ static inline void bmp_clear(unsigned * bmp) {
   for (int i = 0; i < WIDTH * HEIGHT; i++, bmp++) *bmp = 0xFF000000;
 }
 
+static inline void bmp_pix(unsigned * bmp, int x, int y, unsigned p) {
+  if (x < 0 || x >= WIDTH / 2 || y < 0 || y >= HEIGHT / 2) return;
+  bmp[(HEIGHT - y - 1) * WIDTH + x] = p;
+}
+
 int main() {
   unsigned bmp[WIDTH * HEIGHT];
 
   bmp_clear(bmp);
 
-
+  bmp_pix(bmp, 32, 32, ~0);
 
   bmp_write(bmp);
 }
