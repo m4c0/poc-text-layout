@@ -109,26 +109,11 @@ static void pen_r(struct pen_s * p, int a) {
   p->a = (p->a - a + 360) % 360;
 }
 
-int main() {
-  unsigned bmp[WIDTH * HEIGHT];
-
-  bmp_clear(bmp);
-
+static void fnt_0(unsigned * bmp, int * x, int * y) {
   struct pen_s p = {
     .bmp = bmp,
-    .x   = 20,
-    .y   = 60,
-  };
-  pen_m(&p, 10);
-  pen_r(&p, 90);
-  pen_f(&p, 40);
-  pen_r(&p, 90);
-  pen_f(&p, 10);
-
-  p = (struct pen_s) {
-    .bmp = bmp,
-    .x   = 20 + 20,
-    .y   = 60 +  0,
+    .x   = *x,
+    .y   = *y,
   };
   pen_f(&p, 20);
   pen_r(&p, 90);
@@ -142,18 +127,33 @@ int main() {
   pen_r(&p, 90);
   pen_m(&p, 20);
   pen_f(&p, 0);
+  *x += 30;
+}
+static void fnt_1(unsigned * bmp, int * x, int * y) {
+  struct pen_s p = {
+    .bmp = bmp,
+    .x   = *x,
+    .y   = *y,
+  };
+  pen_m(&p, 10);
+  pen_r(&p, 90);
+  pen_f(&p, 40);
+  pen_r(&p, 90);
+  pen_f(&p, 10);
+  *x += 20;
+}
 
-#if 0
-  bmp_line(bmp, 20, 60, 40, 60);
-  bmp_line(bmp, 30, 60, 30, 20);
-  bmp_line(bmp, 30, 20, 20, 20);
+int main() {
+  unsigned bmp[WIDTH * HEIGHT];
 
-  bmp_line(bmp, 50, 60, 70, 60);
-  bmp_line(bmp, 70, 60, 70, 20);
-  bmp_line(bmp, 70, 20, 50, 20);
-  bmp_line(bmp, 50, 20, 50, 60);
-  bmp_line(bmp, 60, 40, 60, 40);
-#endif
+  bmp_clear(bmp);
+
+  int x = 20;
+  int y = 60;
+  fnt_1(bmp, &x, &y);
+  fnt_0(bmp, &x, &y);
+  fnt_1(bmp, &x, &y);
+  fnt_0(bmp, &x, &y);
 
   bmp_write(bmp);
 }
