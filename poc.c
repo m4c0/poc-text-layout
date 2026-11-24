@@ -224,26 +224,28 @@ static void fnt_e_circ(struct pen_s * p) {
   fnt_comp_circ(p);
 }
 
-static void layout(struct pen_s * p) {
-  fnt_t(p);
-  fnt_a(p);
-  fnt_t(p);
-  fnt_a_circ(p);
-  fnt_1(p);
-  fnt_0(p);
-  fnt_0(p);
-  fnt_1(p);
-  fnt_e_circ(p);
+static void layout(struct pen_s * p, const char * str) {
+  for (const char * c = str; *c; c++) {
+    switch (*c) {
+      case 'a': fnt_a(p); break;
+      case 't': fnt_t(p); break;
+
+      case '0': fnt_0(p); break;
+      case '1': fnt_1(p); break;
+    }
+  }
 }
 
 static void dummy(void * bmp, int x1, int y1, int x2, int y2) {}
-int main() {
+int main(int argc, char ** argv) {
+  const char * str = argc == 2 ? argv[1] : "caô";
+
   struct pen_s p = {
     .line = dummy,
     .x = 30,
     .y = 80,
   };
-  layout(&p);
+  layout(&p, str);
 
   struct bmp_s bmp = {
     .data = malloc(p.x * p.y * 4),
@@ -259,7 +261,7 @@ int main() {
     .x    = 20,
     .y    = 60,
   };
-  layout(&p);
+  layout(&p, str);
 
   bmp_write(&bmp);
 }
