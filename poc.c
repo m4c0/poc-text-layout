@@ -226,12 +226,22 @@ static void fnt_e_circ(struct pen_s * p) {
 
 static void layout(struct pen_s * p, const char * str) {
   for (const char * c = str; *c; c++) {
-    switch (*c) {
+    switch ((unsigned char)*c) {
       case 'a': fnt_a(p); break;
+      case 'e': fnt_e(p); break;
       case 't': fnt_t(p); break;
 
       case '0': fnt_0(p); break;
       case '1': fnt_1(p); break;
+
+      case 0xc3: {
+        c++;
+        switch ((unsigned char)*c) {
+          case 0xa2: fnt_a_circ(p); break;
+          case 0xaa: fnt_e_circ(p); break;
+        }
+        break;
+      }
     }
   }
 }
