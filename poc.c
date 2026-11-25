@@ -246,7 +246,10 @@ static void layout(struct pen_s * p, const char * str) {
   }
 }
 
-static void dummy(void * bmp, int x1, int y1, int x2, int y2) {}
+static int count = 0;
+static void dummy(void * bmp, int x1, int y1, int x2, int y2) {
+  count++;
+}
 int main(int argc, char ** argv) {
   const char * str = argc == 2 ? argv[1] : "caô";
 
@@ -256,6 +259,7 @@ int main(int argc, char ** argv) {
     .y = 80,
   };
   layout(&p, str);
+  printf("lines: %d\n", count);
 
   struct bmp_s bmp = {
     .data = malloc(p.x * p.y * 4),
