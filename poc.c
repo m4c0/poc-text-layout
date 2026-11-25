@@ -113,6 +113,10 @@ static void pen_r(struct pen_s * p, int a) {
   p->a = (p->a - a + 360) % 360;
 }
 
+static void fnt_space(struct pen_s * p) {
+  pen_m(p, 20);
+}
+
 static void fnt_0(struct pen_s * p) {
   pen_f(p, 20);
   pen_r(p, 90);
@@ -227,6 +231,8 @@ static void fnt_e_circ(struct pen_s * p) {
 static void layout(struct pen_s * p, const char * str) {
   for (const char * c = str; *c; c++) {
     switch ((unsigned char)*c) {
+      case ' ': fnt_space(p); break;
+
       case 'a': fnt_a(p); break;
       case 'e': fnt_e(p); break;
       case 't': fnt_t(p); break;
