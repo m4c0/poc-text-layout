@@ -10,6 +10,7 @@ typedef struct fnt_pen_s {
   int angle;
 } fnt_pen_t;
 
+int  fnt_x_advance(const char * str);
 void fnt_layout(fnt_pen_t * pen, const char * str);
 
 #ifdef FNT_IMPLEMENTATION
@@ -138,6 +139,12 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
   }
 }
 
+static void fnt_dummy(void * bmp, int x1, int y1, int x2, int y2) {}
+int fnt_x_advance(const char * str) {
+  fnt_pen_t p = { .line = fnt_dummy };
+  fnt_layout(&p, str);
+  return p.x;
+}
 
 #endif
 #endif

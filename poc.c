@@ -97,18 +97,17 @@ static void dummy(void * bmp, int x1, int y1, int x2, int y2) {
 int main(int argc, char ** argv) {
   const char * str = argc == 2 ? argv[1] : "caô";
 
-  fnt_pen_t p = {
-    .line = dummy,
-    .x = 30,
-    .y = 80,
-  };
+  fnt_pen_t p = { .line = dummy };
   fnt_layout(&p, str);
   printf("lines: %d\n", count);
 
+  int w = 40 + fnt_x_advance(str);
+  int h = 80;
+
   struct bmp_s bmp = {
-    .data = malloc(p.x * p.y * 4),
-    .w    = p.x,
-    .h    = p.y,
+    .data = malloc(w * h * 4),
+    .w    = w,
+    .h    = h,
   };
 
   bmp_clear(&bmp);
