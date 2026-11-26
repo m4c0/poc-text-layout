@@ -7,7 +7,7 @@ typedef struct fnt_pen_s {
 
   float x;
   float y;
-  int a;
+  int angle;
 } fnt_pen_t;
 
 void fnt_layout(fnt_pen_t * pen, const char * str);
@@ -15,22 +15,23 @@ void fnt_layout(fnt_pen_t * pen, const char * str);
 #ifdef FNT_IMPLEMENTATION
 #include <math.h>
 
-#define PI 3.1415926535897
-static void fnt_pen_m(fnt_pen_t * p, int d) {
-  p->x += cos((p->a * PI) / 180.f) * d;
-  p->y += sin((p->a * PI) / 180.f) * d;
+static inline float fnt_d2r(float a) {
+  return (a * 3.141592658979323) / 180.f;
 }
-static void fnt_pen_f(fnt_pen_t * p, int d) {
-  float tx = p->x + cos((p->a * PI) / 180.f) * d;
-  float ty = p->y + sin((p->a * PI) / 180.f) * d;
+static inline void fnt_pen_m(fnt_pen_t * p, int d) {
+  p->x += cos(fnt_d2r(p->angle)) * d;
+  p->y += sin(fnt_d2r(p->angle)) * d;
+}
+static inline void fnt_pen_f(fnt_pen_t * p, int d) {
+  float tx = p->x + cos(fnt_d2r(p->angle)) * d;
+  float ty = p->y + sin(fnt_d2r(p->angle)) * d;
   (p->line)(p->ptr, p->x, p->y, tx, ty);
   p->x = tx;
   p->y = ty;
 }
-static void fnt_pen_r(fnt_pen_t * p, int a) {
-  p->a = (p->a - a + 360) % 360;
+static inline void fnt_pen_r(fnt_pen_t * p, int a) {
+  p->angle = (p->angle - a + 360) % 360;
 }
-#undef PI
 
 static void fnt_space(fnt_pen_t * p) {
   fnt_pen_m(p, 20);
