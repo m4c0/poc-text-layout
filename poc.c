@@ -101,8 +101,10 @@ int main(int argc, char ** argv) {
   fnt_layout(&p, str);
   printf("lines: %d\n", count);
 
-  int w = 40 + fnt_x_advance(str);
-  int h = 80;
+  fnt_metrics_t m;
+  fnt_metrics(&m, str);
+  int w = 40 + m.max_x - m.min_x;
+  int h = 40 + m.max_y - m.min_y;
 
   struct bmp_s bmp = {
     .data = malloc(w * h * 4),
@@ -115,8 +117,8 @@ int main(int argc, char ** argv) {
   p = (fnt_pen_t) {
     .line = bmp_line,
     .ptr  = &bmp,
-    .x    = 20,
-    .y    = 60,
+    .x    = 20 - m.min_x,
+    .y    = 20 - m.min_y,
   };
   fnt_layout(&p, str);
 

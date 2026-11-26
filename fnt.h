@@ -1,6 +1,11 @@
 #ifndef FNT_H
 #define FNT_H
 
+typedef struct fnt_metrics_s {
+  int min_x, min_y;
+  int max_x, max_y;
+} fnt_metrics_t;
+
 typedef struct fnt_pen_s {
   void (*line)(void * ptr, int x1, int y1, int x2, int y2);
   void * ptr;
@@ -10,8 +15,8 @@ typedef struct fnt_pen_s {
   int angle;
 } fnt_pen_t;
 
-int  fnt_x_advance(const char * str);
 void fnt_layout(fnt_pen_t * pen, const char * str);
+void fnt_metrics(fnt_metrics_t * m, const char * str);
 
 #ifdef FNT_IMPLEMENTATION
 #include <math.h>
@@ -139,11 +144,27 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
   }
 }
 
-static void fnt_dummy(void * bmp, int x1, int y1, int x2, int y2) {}
-int fnt_x_advance(const char * str) {
-  fnt_pen_t p = { .line = fnt_dummy };
+static void fnt_metrics_fn(void * ptr, int x1, int y1, int x2, int y2) {
+  fnt_metrics_t * m = ptr;
+
+  if (x1 < m->min_x) m->min_x = x1;
+  if (x2 < m->min_x) m->min_x = x2;
+  if (y1 < m->min_y) m->min_y = y1;
+  if (y2 < m->min_y) m->min_y = y2;
+
+  if (x1 > m->max_x) m->max_x = x1;
+  if (x2 > m->max_x) m->max_x = x2;
+  if (y1 > m->max_y) m->max_y = y1;
+  if (y2 > m->max_y) m->max_y = y2;
+}
+void fnt_metrics(fnt_metrics_t * m, const char * str) {
+  *m = (fnt_metrics_t){0};
+
+  fnt_pen_t p = {
+    .line = fnt_metrics_fn,
+    .ptr  = m,
+  };
   fnt_layout(&p, str);
-  return p.x;
 }
 
 #endif
