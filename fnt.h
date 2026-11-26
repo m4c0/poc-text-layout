@@ -10,8 +10,8 @@ typedef struct fnt_pen_s {
   void (*line)(void * ptr, int x1, int y1, int x2, int y2);
   void * ptr;
 
-  float x;
-  float y;
+  double x;
+  double y;
   int angle;
 } fnt_pen_t;
 
@@ -21,16 +21,16 @@ void fnt_metrics(fnt_metrics_t * m, const char * str);
 #ifdef FNT_IMPLEMENTATION
 #include <math.h>
 
-static inline float fnt_d2r(float a) {
-  return (a * 3.141592658979323) / 180.f;
+static inline double fnt_d2r(double a) {
+  return (a * 3.141592658979323) / 180.;
 }
 static inline void fnt_pen_m(fnt_pen_t * p, int d) {
   p->x += cos(fnt_d2r(p->angle)) * d;
   p->y += sin(fnt_d2r(p->angle)) * d;
 }
 static inline void fnt_pen_f(fnt_pen_t * p, int d) {
-  float tx = p->x + cos(fnt_d2r(p->angle)) * d;
-  float ty = p->y + sin(fnt_d2r(p->angle)) * d;
+  double tx = p->x + cos(fnt_d2r(p->angle)) * d;
+  double ty = p->y + sin(fnt_d2r(p->angle)) * d;
   (p->line)(p->ptr, p->x, p->y, tx, ty);
   p->x = tx;
   p->y = ty;
