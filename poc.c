@@ -1,11 +1,12 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#include <math.h>
+#define FNT_IMPLEMENTATION
+#include "fnt.h"
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define PI 3.1415926535897
 #define SWAP(a, b) do { a ^= b; b ^= a; a ^= b; } while (0)
 
 #define BMP_BLIP_R 2
@@ -89,135 +90,6 @@ static void bmp_line(void * bmp, int x1, int y1, int x2, int y2) {
   }
 }
 
-struct pen_s {
-  void (*line)(void * ptr, int x1, int y1, int x2, int y2);
-  void * ptr;
-
-  float x;
-  float y;
-  int a;
-};
-
-static void pen_m(struct pen_s * p, int d) {
-  p->x += cos((p->a * PI) / 180.f) * d;
-  p->y += sin((p->a * PI) / 180.f) * d;
-}
-static void pen_f(struct pen_s * p, int d) {
-  float tx = p->x + cos((p->a * PI) / 180.f) * d;
-  float ty = p->y + sin((p->a * PI) / 180.f) * d;
-  (p->line)(p->ptr, p->x, p->y, tx, ty);
-  p->x = tx;
-  p->y = ty;
-}
-static void pen_r(struct pen_s * p, int a) {
-  p->a = (p->a - a + 360) % 360;
-}
-
-static void fnt_space(struct pen_s * p) {
-  pen_m(p, 20);
-}
-
-static void fnt_0(struct pen_s * p) {
-  pen_f(p, 20);
-  pen_r(p, 90); pen_f(p, 40);
-  pen_r(p, 90); pen_f(p, 20);
-  pen_r(p, 90); pen_f(p, 40);
-  pen_r(p, 90); pen_m(p, 10);
-  pen_r(p, 90); pen_m(p, 20);
-  pen_f(p, 0);
-
-  pen_m(p, -20);
-  pen_r(p, -90); pen_m(p, 20);
-}
-static void fnt_1(struct pen_s * p) {
-  pen_m(p, 10); pen_r(p, 90);
-  pen_f(p, 40); pen_r(p, 90);
-  pen_f(p, 10);
-
-  pen_r(p, 90); pen_m(p, 40);
-  pen_r(p, 90); pen_m(p, 20);
-}
-static void fnt_a(struct pen_s * p) {
-  pen_r(p,  90); pen_m(p, 30);
-  pen_r(p, -90); pen_f(p, 20);
-  pen_r(p, -90); pen_f(p, 30);
-  pen_r(p, -90); pen_f(p, 20);
-  pen_r(p, -90); pen_f(p, 20);
-  pen_r(p, -90); pen_f(p, 20);
-  pen_r(p, -90); pen_m(p, 20);
-  pen_r(p,  90); pen_m(p, 10);
-}
-static void fnt_e(struct pen_s * p) {
-  pen_r(p,  90); pen_m(p, 10);
-  pen_r(p, -90); pen_f(p, 20);
-  pen_r(p,  90); pen_f(p, 20);
-  pen_r(p,  90); pen_f(p, 20);
-  pen_r(p,  90); pen_f(p, 30);
-  pen_r(p,  90); pen_f(p, 20);
-  pen_m(p,  10);
-}
-static void fnt_t(struct pen_s * p) {
-  pen_f(p,  15);
-  pen_m(p, -15);
-  pen_r(p,  90); pen_f(p, 40);
-  pen_m(p, -10);
-  pen_r(p, -90); pen_f(p, 10);
-  pen_m(p,  15);
-  pen_r(p, -90); pen_m(p, 30);
-  pen_r(p, 90);
-}
-
-static void fnt_circ(struct pen_s * p) {
-  pen_m(p,   5);
-  pen_r(p,  90); pen_f(p,  5);
-  pen_r(p, -90); pen_f(p, 10);
-  pen_r(p, -90); pen_f(p,  5);
-  pen_r(p,  90); pen_m(p, 15);
-}
-
-static void fnt_comp_circ(struct pen_s * p) {
-  pen_m(p, -30);
-  pen_r(p,  90); pen_m(p, 40);
-  pen_r(p, -90);
-
-  fnt_circ(p);
-
-  pen_r(p, -90); pen_m(p, 40);
-  pen_r(p,  90);
-}
-static void fnt_a_circ(struct pen_s * p) {
-  fnt_a(p);
-  fnt_comp_circ(p);
-}
-static void fnt_e_circ(struct pen_s * p) {
-  fnt_e(p);
-  fnt_comp_circ(p);
-}
-
-static void layout(struct pen_s * p, const char * str) {
-  for (const char * c = str; *c; c++) {
-    switch ((unsigned char)*c) {
-      case ' ': fnt_space(p); break;
-
-      case 'a': fnt_a(p); break;
-      case 'e': fnt_e(p); break;
-      case 't': fnt_t(p); break;
-
-      case '0': fnt_0(p); break;
-      case '1': fnt_1(p); break;
-
-      case 0xc3: {
-        c++;
-        switch ((unsigned char)*c) {
-          case 0xa2: fnt_a_circ(p); break;
-          case 0xaa: fnt_e_circ(p); break;
-        }
-        break;
-      }
-    }
-  }
-}
-
 static int count = 0;
 static void dummy(void * bmp, int x1, int y1, int x2, int y2) {
   count++;
@@ -225,12 +97,12 @@ static void dummy(void * bmp, int x1, int y1, int x2, int y2) {
 int main(int argc, char ** argv) {
   const char * str = argc == 2 ? argv[1] : "caô";
 
-  struct pen_s p = {
+  fnt_pen_t p = {
     .line = dummy,
     .x = 30,
     .y = 80,
   };
-  layout(&p, str);
+  fnt_layout(&p, str);
   printf("lines: %d\n", count);
 
   struct bmp_s bmp = {
@@ -241,13 +113,13 @@ int main(int argc, char ** argv) {
 
   bmp_clear(&bmp);
 
-  p = (struct pen_s) {
+  p = (fnt_pen_t) {
     .line = bmp_line,
     .ptr  = &bmp,
     .x    = 20,
     .y    = 60,
   };
-  layout(&p, str);
+  fnt_layout(&p, str);
 
   bmp_write(&bmp);
 }
