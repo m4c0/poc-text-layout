@@ -93,6 +93,17 @@ static void fnt_t(fnt_pen_t * p) {
   fnt_pen_r(p, 90);
 }
 
+static void fnt_comp_in(fnt_pen_t * p) {
+  fnt_pen_m(p, -30);
+  fnt_pen_r(p,  90); fnt_pen_m(p, 40);
+  fnt_pen_r(p, -90);
+}
+static void fnt_comp_out(fnt_pen_t * p) {
+  fnt_pen_r(p, -90); fnt_pen_m(p, 40);
+  fnt_pen_r(p,  90);
+}
+#define FNT_COMP(p, k, c) (k(p), fnt_comp_in(p), c(p), fnt_comp_out(p))
+
 static void fnt_circ(fnt_pen_t * p) {
   fnt_pen_m(p,   5);
   fnt_pen_r(p,  90); fnt_pen_f(p,  5);
@@ -100,24 +111,26 @@ static void fnt_circ(fnt_pen_t * p) {
   fnt_pen_r(p, -90); fnt_pen_f(p,  5);
   fnt_pen_r(p,  90); fnt_pen_m(p, 15);
 }
-
-static void fnt_comp_circ(fnt_pen_t * p) {
-  fnt_pen_m(p, -30);
-  fnt_pen_r(p,  90); fnt_pen_m(p, 40);
-  fnt_pen_r(p, -90);
-
-  fnt_circ(p);
-
-  fnt_pen_r(p, -90); fnt_pen_m(p, 40);
-  fnt_pen_r(p,  90);
-}
 static void fnt_a_circ(fnt_pen_t * p) {
-  fnt_a(p);
-  fnt_comp_circ(p);
+  FNT_COMP(p, fnt_a, fnt_circ);
 }
 static void fnt_e_circ(fnt_pen_t * p) {
-  fnt_e(p);
-  fnt_comp_circ(p);
+  FNT_COMP(p, fnt_e, fnt_circ);
+}
+
+static void fnt_grave(fnt_pen_t * p) {
+  fnt_pen_m(p,   5);
+  fnt_pen_r(p,  90); fnt_pen_m(p, 5);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 10);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 5);
+  fnt_pen_m(p,   5);
+  fnt_pen_r(p,  90); fnt_pen_m(p, 15);
+}
+static void fnt_a_grave(fnt_pen_t * p) {
+  FNT_COMP(p, fnt_a, fnt_grave);
+}
+static void fnt_e_grave(fnt_pen_t * p) {
+  FNT_COMP(p, fnt_e, fnt_grave);
 }
 
 static int fnt_decode_utf8(const char ** str) {
@@ -163,7 +176,9 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
       case '0': fnt_0(p); break;
       case '1': fnt_1(p); break;
 
+      case 0xe0: fnt_a_grave(p); break;
       case 0xe2: fnt_a_circ(p); break;
+      case 0xe9: fnt_e_grave(p); break;
       case 0xea: fnt_e_circ(p); break;
     }
   }
