@@ -120,6 +120,32 @@ static void fnt_e_circ(fnt_pen_t * p) {
   fnt_comp_circ(p);
 }
 
+static int fnt_decode_utf8(const char ** str) {
+  unsigned char a = *(*str)++;
+  if ((a & 0x80) == 0) return a;
+
+  int n = 0;
+  if ((a & 0xE0) == 0xC0) {
+    n = 1;
+    a &= ~0xE0;
+  } else if ((a & 0xF0) == 0xE0) {
+    n = 2;
+    a &= ~0xF0;
+  } else if ((a & 0xF8) == 0xF0) {
+    n = 3;
+    a &= ~0xF8;
+  } else {
+    return 0;
+  }
+
+  int res = a;
+  for (int i = 0; i < n; i++) {
+    unsigned char a = *(*str)++;
+    if ((a & 0xC0) != 0x80) return 0;
+    res = (res << 6) | (a & ~0xC0);
+  }
+  return res;
+}
 void fnt_layout(fnt_pen_t * p, const char * str) {
   for (const char * c = str; *c; c++) {
     switch ((unsigned char)*c) {
