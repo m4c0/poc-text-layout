@@ -149,6 +149,10 @@ static int fnt_decode_utf8(const char ** str) {
 void fnt_layout(fnt_pen_t * p, const char * str) {
   for (const char * c = str; *c;) {
     int uni = fnt_decode_utf8(&c);
+
+    if (uni >= 'A' && uni <= 'Z') uni |= 0x20;
+    if ((uni & 0xC0) == 0xC0) uni |= 0x20;
+
     switch (uni) {
       case ' ': fnt_space(p); break;
 
