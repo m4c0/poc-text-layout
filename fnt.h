@@ -90,6 +90,12 @@ static void fnt_i(fnt_pen_t * p) {
   fnt_pen_r(p, -90); fnt_pen_f(p, 5);
   fnt_pen_m(p,  10);
 }
+static void fnt_i_accent(fnt_pen_t * p) {
+  fnt_pen_r(p,  90); fnt_pen_f(p, 30);
+  fnt_pen_m(p, -30);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 5);
+  fnt_pen_m(p,  10);
+}
 static void fnt_i_eow(fnt_pen_t * p) {
   fnt_pen_r(p,  90); fnt_pen_f(p, 30);
   fnt_pen_m(p,  10);
@@ -139,7 +145,15 @@ static void fnt_comp_out(fnt_pen_t * p) {
   fnt_pen_r(p, -90); fnt_pen_m(p, 40);
   fnt_pen_r(p,  90);
 }
-#define FNT_COMP(p, k, c) (k(p), fnt_comp_in(p), c(p), fnt_comp_out(p))
+#define FNT_COMP_N(p, k, c, n) do { \
+  k(p);             \
+  fnt_comp_in(p);   \
+  fnt_pen_m(p, n);  \
+  c(p);             \
+  fnt_pen_m(p, -n); \
+  fnt_comp_out(p);  \
+} while (0)
+#define FNT_COMP(p, k, c) FNT_COMP_N(p, k, c, 0)
 
 static void fnt_acute(fnt_pen_t * p) {
   fnt_pen_m(p,   5);
@@ -153,6 +167,12 @@ static void fnt_a_acute(fnt_pen_t * p) {
 }
 static void fnt_e_acute(fnt_pen_t * p) {
   FNT_COMP(p, fnt_e, fnt_acute);
+}
+static void fnt_i_acute(fnt_pen_t * p) {
+  FNT_COMP_N(p, fnt_i_accent, fnt_acute, 5);
+}
+static void fnt_o_acute(fnt_pen_t * p) {
+  FNT_COMP(p, fnt_o, fnt_acute);
 }
 
 static void fnt_circ(fnt_pen_t * p) {
@@ -168,6 +188,12 @@ static void fnt_a_circ(fnt_pen_t * p) {
 static void fnt_e_circ(fnt_pen_t * p) {
   FNT_COMP(p, fnt_e, fnt_circ);
 }
+static void fnt_i_circ(fnt_pen_t * p) {
+  FNT_COMP_N(p, fnt_i_accent, fnt_circ, 5);
+}
+static void fnt_o_circ(fnt_pen_t * p) {
+  FNT_COMP(p, fnt_o, fnt_circ);
+}
 
 static void fnt_grave(fnt_pen_t * p) {
   fnt_pen_m(p,   5);
@@ -181,6 +207,12 @@ static void fnt_a_grave(fnt_pen_t * p) {
 }
 static void fnt_e_grave(fnt_pen_t * p) {
   FNT_COMP(p, fnt_e, fnt_grave);
+}
+static void fnt_i_grave(fnt_pen_t * p) {
+  FNT_COMP_N(p, fnt_i_accent, fnt_grave, 5);
+}
+static void fnt_o_grave(fnt_pen_t * p) {
+  FNT_COMP(p, fnt_o, fnt_grave);
 }
 
 static int fnt_decode_utf8(const char ** str) {
@@ -252,6 +284,12 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
       case 0xe8: fnt_e_grave(p); break;
       case 0xe9: fnt_e_acute(p); break;
       case 0xea: fnt_e_circ(p); break;
+      case 0xec: fnt_i_grave(p); break;
+      case 0xed: fnt_i_acute(p); break;
+      case 0xee: fnt_i_circ(p); break;
+      case 0xf2: fnt_o_grave(p); break;
+      case 0xf3: fnt_o_acute(p); break;
+      case 0xf4: fnt_o_circ(p); break;
     }
   }
 }
