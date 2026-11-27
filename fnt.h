@@ -147,8 +147,9 @@ static int fnt_decode_utf8(const char ** str) {
   return res;
 }
 void fnt_layout(fnt_pen_t * p, const char * str) {
-  for (const char * c = str; *c; c++) {
-    switch ((unsigned char)*c) {
+  for (const char * c = str; *c;) {
+    int uni = fnt_decode_utf8(&c);
+    switch (uni) {
       case ' ': fnt_space(p); break;
 
       case 'a': fnt_a(p); break;
@@ -158,14 +159,8 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
       case '0': fnt_0(p); break;
       case '1': fnt_1(p); break;
 
-      case 0xc3: {
-        c++;
-        switch ((unsigned char)*c) {
-          case 0xa2: fnt_a_circ(p); break;
-          case 0xaa: fnt_e_circ(p); break;
-        }
-        break;
-      }
+      case 0xe2: fnt_a_circ(p); break;
+      case 0xea: fnt_e_circ(p); break;
     }
   }
 }
