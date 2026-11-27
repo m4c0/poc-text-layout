@@ -82,6 +82,21 @@ static void fnt_e(fnt_pen_t * p) {
   fnt_pen_r(p,  90); fnt_pen_f(p, 20);
   fnt_pen_m(p,  10);
 }
+static void fnt_i(fnt_pen_t * p) {
+  fnt_pen_r(p,  90); fnt_pen_f(p, 30);
+  fnt_pen_m(p,  10);
+  fnt_pen_f(p,   0);
+  fnt_pen_m(p, -40);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 5);
+  fnt_pen_m(p,  10);
+}
+static void fnt_i_eow(fnt_pen_t * p) {
+  fnt_pen_r(p,  90); fnt_pen_f(p, 30);
+  fnt_pen_m(p,  10);
+  fnt_pen_f(p,   0);
+  fnt_pen_m(p, -40);
+  fnt_pen_r(p, -90); fnt_pen_m(p,  10);
+}
 static void fnt_n(fnt_pen_t * p) {
   fnt_pen_r(p,  90); fnt_pen_f(p, 30);
   fnt_pen_r(p, -90); fnt_pen_f(p, 20);
@@ -185,6 +200,15 @@ static int fnt_decode_utf8(const char ** str) {
   }
   return res;
 }
+static inline int fnt_is_latin_letter(const char * str) {
+  int uni = fnt_decode_utf8(&str);
+
+  if (uni >= 'A' && uni <= 'Z') return 1;
+  if (uni >= 'a' && uni <= 'z') return 1;
+  if ((uni & 0xC0) == 0xC0) return 1;
+
+  return 0;
+}
 void fnt_layout(fnt_pen_t * p, const char * str) {
   for (const char * c = str; *c;) {
     int uni = fnt_decode_utf8(&c);
@@ -197,6 +221,14 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
 
       case 'a': fnt_a(p); break;
       case 'e': fnt_e(p); break;
+      case 'i': {
+        if (fnt_is_latin_letter(c)) {
+          fnt_i(p);
+        } else {
+          fnt_i_eow(p);
+        }
+        break;
+      }
       case 'n': fnt_n(p); break;
       case 'o': fnt_o(p); break;
       case 't': fnt_t(p); break;
