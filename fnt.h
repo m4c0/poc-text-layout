@@ -120,6 +120,15 @@ static void fnt_t(fnt_pen_t * p) {
   fnt_pen_r(p, -90); fnt_pen_m(p, 30);
   fnt_pen_r(p, 90);
 }
+static void fnt_v(fnt_pen_t * p) {
+  fnt_pen_r(p,  90); fnt_pen_m(p, 30);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 5);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 30);
+  fnt_pen_r(p,  90); fnt_pen_f(p, 20);
+  fnt_pen_r(p,  90); fnt_pen_f(p, 30);
+  fnt_pen_m(p, -30);
+  fnt_pen_r(p, -90); fnt_pen_m(p, 10);
+}
 
 static void fnt_comp_in(fnt_pen_t * p) {
   fnt_pen_m(p, -30);
@@ -232,6 +241,7 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
       case 'n': fnt_n(p); break;
       case 'o': fnt_o(p); break;
       case 't': fnt_t(p); break;
+      case 'v': fnt_v(p); break;
 
       case '0': fnt_0(p); break;
       case '1': fnt_1(p); break;
