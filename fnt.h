@@ -114,6 +114,15 @@ static void fnt_l_eow(fnt_pen_t * p) {
   fnt_pen_f(p, -40);
   fnt_pen_r(p, -90); fnt_pen_m(p, 10);
 }
+static void fnt_m(fnt_pen_t * p) {
+  fnt_pen_r(p,  90); fnt_pen_f(p, 30);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 15);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 30);
+  fnt_pen_m(p, -30);
+  fnt_pen_r(p,  90); fnt_pen_f(p, 15);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 30);
+  fnt_pen_r(p,  90); fnt_pen_m(p, 10);
+}
 static void fnt_n(fnt_pen_t * p) {
   fnt_pen_r(p,  90); fnt_pen_f(p, 30);
   fnt_pen_r(p, -90); fnt_pen_f(p, 20);
@@ -150,7 +159,7 @@ static void fnt_v(fnt_pen_t * p) {
   fnt_pen_r(p,  90); fnt_pen_m(p, 30);
   fnt_pen_r(p, -90); fnt_pen_f(p, 5);
   fnt_pen_r(p, -90); fnt_pen_f(p, 30);
-  fnt_pen_r(p,  90); fnt_pen_f(p, 20);
+  fnt_pen_r(p,  90); fnt_pen_f(p, 15);
   fnt_pen_r(p,  90); fnt_pen_f(p, 30);
   fnt_pen_m(p, -30);
   fnt_pen_r(p, -90); fnt_pen_m(p, 10);
@@ -298,6 +307,7 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
         }
         break;
       }
+      case 'm': fnt_m(p); break;
       case 'n': fnt_n(p); break;
       case 'o': fnt_o(p); break;
       case 's': fnt_s(p); break;
