@@ -103,6 +103,17 @@ static void fnt_i_eow(fnt_pen_t * p) {
   fnt_pen_m(p, -40);
   fnt_pen_r(p, -90); fnt_pen_m(p,  10);
 }
+static void fnt_l(fnt_pen_t * p) {
+  fnt_pen_r(p,  90); fnt_pen_m(p, 40);
+  fnt_pen_f(p, -40);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 5);
+  fnt_pen_m(p,  10);
+}
+static void fnt_l_eow(fnt_pen_t * p) {
+  fnt_pen_r(p,  90); fnt_pen_m(p, 40);
+  fnt_pen_f(p, -40);
+  fnt_pen_r(p, -90); fnt_pen_m(p, 10);
+}
 static void fnt_n(fnt_pen_t * p) {
   fnt_pen_r(p,  90); fnt_pen_f(p, 30);
   fnt_pen_r(p, -90); fnt_pen_f(p, 20);
@@ -115,6 +126,15 @@ static void fnt_o(fnt_pen_t * p) {
   fnt_pen_r(p, 90); fnt_pen_f(p, 20);
   fnt_pen_r(p, 90); fnt_pen_f(p, 30);
   fnt_pen_r(p, 90); fnt_pen_m(p, 30);
+}
+static void fnt_s(fnt_pen_t * p) {
+  fnt_pen_f(p,  20);
+  fnt_pen_r(p,  90); fnt_pen_f(p, 20);
+  fnt_pen_r(p,  90); fnt_pen_f(p, 20);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 10);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 20);
+  fnt_pen_r(p, -90); fnt_pen_m(p, 30);
+  fnt_pen_r(p,  90); fnt_pen_m(p, 10);
 }
 static void fnt_t(fnt_pen_t * p) {
   fnt_pen_f(p,  15);
@@ -270,8 +290,17 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
         }
         break;
       }
+      case 'l': {
+        if (fnt_is_latin_letter(c)) {
+          fnt_l(p);
+        } else {
+          fnt_l_eow(p);
+        }
+        break;
+      }
       case 'n': fnt_n(p); break;
       case 'o': fnt_o(p); break;
+      case 's': fnt_s(p); break;
       case 't': fnt_t(p); break;
       case 'v': fnt_v(p); break;
 
