@@ -73,6 +73,14 @@ static void fnt_a(fnt_pen_t * p) {
   fnt_pen_r(p, -90); fnt_pen_m(p, 20);
   fnt_pen_r(p,  90); fnt_pen_m(p, 10);
 }
+static void fnt_c(fnt_pen_t * p) {
+  fnt_pen_f(p,  15);
+  fnt_pen_m(p, -15);
+  fnt_pen_r(p,  90); fnt_pen_f(p, 30);
+  fnt_pen_r(p, -90); fnt_pen_f(p, 15);
+  fnt_pen_r(p, -90); fnt_pen_m(p, 30);
+  fnt_pen_r(p,  90); fnt_pen_m(p, 10);
+}
 static void fnt_e(fnt_pen_t * p) {
   fnt_pen_r(p,  90); fnt_pen_m(p, 10);
   fnt_pen_r(p, -90); fnt_pen_f(p, 20);
@@ -260,6 +268,7 @@ void fnt_layout(fnt_pen_t * p, const char * str) {
       case ' ': fnt_space(p); break;
 
       case 'a': fnt_a(p); break;
+      case 'c': fnt_c(p); break;
       case 'e': fnt_e(p); break;
       case 'i': {
         if (fnt_is_latin_letter(c)) {
