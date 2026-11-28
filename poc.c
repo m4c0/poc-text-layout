@@ -99,7 +99,7 @@ static void dummy(void * bmp, int x1, int y1, int x2, int y2) {
   count++;
 }
 int main(int argc, char ** argv) {
-  const char * str = strdup(argc == 2 ? argv[1] : PANGRAM);
+  const char * str = argc == 2 ? argv[1] : PANGRAM;
 
   fnt_pen_t p = { .line = dummy };
   fnt_layout(&p, str);
